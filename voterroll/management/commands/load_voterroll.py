@@ -7,6 +7,7 @@ from voterroll.models import VoterRoll, VoterRecord
 FIELDS = ("source_id", "address1", "address2", "city", "statefield", "zipcode",
           "precinct_id", "precinct_name")
 
+
 class Command(BaseCommand):
     help = "Load voter roll data from CSV/TSV file"
 
