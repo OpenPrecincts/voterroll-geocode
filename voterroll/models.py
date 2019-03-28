@@ -1,4 +1,4 @@
-from django.db import models
+from django.contrib.gis.db import models
 
 
 class VoterRoll(models.Model):
@@ -16,3 +16,15 @@ class VoterRecord(models.Model):
     zipcode = models.CharField(max_length=10)   # for zip+4
     precinct_id = models.CharField(max_length=20)
     precinct_name = models.CharField(max_length=100)
+
+
+class GeocodeResult(models.Model):
+    record = models.ForeignKey(VoterRecord, related_name="geocodes", on_delete=models.CASCADE)
+    geocoded_address = models.CharField(max_length=300)
+    is_exact = models.BooleanField()
+    coordinates = models.PointField()
+    tiger_line = models.CharField(max_length=20)
+    tiger_side = models.CharField(max_length=2)
+    county_fips = models.CharField(max_length=4)
+    tract = models.CharField(max_length=8)
+    block = models.CharField(max_length=8)
