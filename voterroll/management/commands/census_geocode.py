@@ -49,8 +49,12 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("state")
-        parser.add_argument("-n", type=int)
+        parser.add_argument("-n", type=int, default=100000)
+        parser.add_argument("--chunk", type=int, default=500)
 
     def handle(self, *args, **options):
-        records = get_records(options["state"], options["n"])
-        geocode_chunk(records)
+        processed = 0
+        while processed < options["n"]:
+            processed += options["chunk"]
+            records = get_records(options["state"], options["chunk"])
+            geocode_chunk(records)
