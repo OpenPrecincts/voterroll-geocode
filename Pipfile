@@ -10,6 +10,7 @@ flake8 = "*"
 django = "*"
 dj-database-url = "*"
 psycopg2-binary = "*"
+censusbatchgeocoder = "*"
 
 [requires]
 python_version = "3.7"
