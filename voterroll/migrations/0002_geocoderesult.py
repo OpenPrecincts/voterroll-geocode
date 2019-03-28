@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('geocoded_address', models.CharField(max_length=300)),
                 ('is_exact', models.BooleanField()),
-                ('coordinates', django.contrib.gis.db.models.fields.PointField(srid=4326)),
+                ('coordinates', django.contrib.gis.db.models.fields.PointField(null=True, srid=4326)),
                 ('tiger_line', models.CharField(max_length=20)),
                 ('tiger_side', models.CharField(max_length=2)),
                 ('county_fips', models.CharField(max_length=4)),

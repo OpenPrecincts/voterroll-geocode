@@ -20,9 +20,10 @@ class VoterRecord(models.Model):
 
 class GeocodeResult(models.Model):
     record = models.ForeignKey(VoterRecord, related_name="geocodes", on_delete=models.CASCADE)
+    failed = models.BooleanField(default=False)
     geocoded_address = models.CharField(max_length=300)
     is_exact = models.BooleanField()
-    coordinates = models.PointField()
+    coordinates = models.PointField(null=True)
     tiger_line = models.CharField(max_length=20)
     tiger_side = models.CharField(max_length=2)
     county_fips = models.CharField(max_length=4)
