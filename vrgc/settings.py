@@ -18,8 +18,9 @@ else:
     DOMAIN = "http://localhost:8000"
 
 
+SPATIALITE_LIBRARY_PATH='/usr/local/lib/mod_spatialite.dylib'
 DATABASE_URL = os.environ.get(
-    "DATABASE_URL", "sqlite:///" + os.path.join(BASE_DIR, "db.sqlite3")
+    "DATABASE_URL", "spatialite:///" + os.path.join(BASE_DIR, "db.sqlite3")
 )
 DATABASES = {"default": dj_database_url.parse(DATABASE_URL)}
 CONN_MAX_AGE = 60
