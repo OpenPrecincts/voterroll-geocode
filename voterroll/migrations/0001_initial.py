@@ -8,35 +8,54 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='VoterRecord',
+            name="VoterRecord",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('source_id', models.CharField(max_length=40)),
-                ('address1', models.CharField(max_length=300)),
-                ('address2', models.CharField(blank=True, max_length=300)),
-                ('city', models.CharField(max_length=50)),
-                ('state', models.CharField(max_length=2)),
-                ('zipcode', models.CharField(max_length=10)),
-                ('precinct_id', models.CharField(max_length=20)),
-                ('precinct_name', models.CharField(max_length=100)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("source_id", models.CharField(max_length=40)),
+                ("address1", models.CharField(max_length=300)),
+                ("address2", models.CharField(blank=True, max_length=300)),
+                ("city", models.CharField(max_length=50)),
+                ("state", models.CharField(max_length=2)),
+                ("zipcode", models.CharField(max_length=10)),
+                ("precinct_id", models.CharField(max_length=20)),
+                ("precinct_name", models.CharField(max_length=100)),
             ],
         ),
         migrations.CreateModel(
-            name='VoterRoll',
+            name="VoterRoll",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('state', models.CharField(max_length=2)),
-                ('source', models.CharField(max_length=30)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("state", models.CharField(max_length=2)),
+                ("source", models.CharField(max_length=30)),
             ],
         ),
         migrations.AddField(
-            model_name='voterrecord',
-            name='roll',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='records', to='voterroll.VoterRoll'),
+            model_name="voterrecord",
+            name="roll",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="records",
+                to="voterroll.VoterRoll",
+            ),
         ),
     ]

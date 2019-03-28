@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('voterroll', '0002_geocoderesult'),
-    ]
+    dependencies = [("voterroll", "0002_geocoderesult")]
 
     operations = [
         migrations.AddField(
-            model_name='geocoderesult',
-            name='failed',
+            model_name="geocoderesult",
+            name="failed",
             field=models.BooleanField(default=False),
-        ),
+        )
     ]
