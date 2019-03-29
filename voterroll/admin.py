@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import VoterRecord
 
-# Register your models here.
+
+@admin.register(VoterRecord)
+class VoterRecordAdmin(admin.ModelAdmin):
+    list_display = ('source_id', 'roll', 'address1', 'precinct_name')

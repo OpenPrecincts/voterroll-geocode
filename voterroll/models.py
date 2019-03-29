@@ -5,6 +5,9 @@ class VoterRoll(models.Model):
     state = models.CharField(max_length=2)
     source = models.CharField(max_length=30)
 
+    def __str__(self):
+        return f"{self.state} - {self.source}"
+
 
 class VoterRecord(models.Model):
     roll = models.ForeignKey(
