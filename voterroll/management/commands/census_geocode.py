@@ -73,7 +73,11 @@ class Command(BaseCommand):
             records = get_records(options["state"], options["chunk"])
             elapsed = time.time() - start
             print(f"got {len(records)} in {elapsed}")
-            results, failures, elapsed = geocode_chunk(records)
+            try:
+                results, failures, elapsed = geocode_chunk(records)
+            except Exception as e:
+                print(e)
+                continue
             print(f"saving {results} records, {failures} were non-matched, took {elapsed}")
             total_failures += failures
             total_elapsed += elapsed
