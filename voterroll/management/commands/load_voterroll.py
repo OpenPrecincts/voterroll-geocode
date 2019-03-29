@@ -15,6 +15,8 @@ FIELDS = (
     "precinct_name",
 )
 
+BATCH_SIZE = 30000
+
 
 class Command(BaseCommand):
     help = "Load voter roll data from CSV/TSV file"
@@ -29,6 +31,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         field_map = {options.get(k) or k: k for k in FIELDS}
         records = []
+        total = 0
 
         with transaction.atomic():
             roll = VoterRoll.objects.create(
@@ -43,4 +46,13 @@ class Command(BaseCommand):
                     data["state"] = data.pop("statefield")
                     records.append(VoterRecord(roll=roll, **data))
 
-                roll.records.bulk_create(records)
+                    if len(records) == BATCH_SIZE:
+                        VoterRecord.objects.bulk_create(records, batch_size=1000)
+                        total += len(records)
+                        print(f"creating {BATCH_SIZE} records, total={total}")
+                        records = []
+
+                # create whatever is left
+                VoterRecord.objects.bulk_create(records)
+                total += len(records)
+                print(f"creating {len(records)} records, total={total}")
