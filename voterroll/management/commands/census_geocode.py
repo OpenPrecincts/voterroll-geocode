@@ -1,10 +1,11 @@
+import time
 from django.core.management.base import BaseCommand
 from django.contrib.gis.geos import Point
 from voterroll.models import VoterRecord, GeocodeResult
 import censusbatchgeocoder
 
 
-MAX_CHUNK_SIZE = 1000
+MAX_CHUNK_SIZE = 10000
 
 
 def get_records(state, n):
@@ -29,6 +30,7 @@ def record_to_dict(record):
 def geocode_chunk(records):
     results = []
     failures = 0
+    start = time.time()
     for result in censusbatchgeocoder.geocode(records):
         if result["is_match"] == "Match":
             results.append(
@@ -48,7 +50,8 @@ def geocode_chunk(records):
             results.append(
                 GeocodeResult(record_id=result["id"], failed=True, is_exact=False)
             )
-    print(f"saving {len(results)} records, {failures} were non-matched")
+    elapsed = time.time() - start
+    print(f"saving {len(results)} records, {failures} were non-matched, took {elapsed}")
     GeocodeResult.objects.bulk_create(results)
 
 
@@ -64,5 +67,8 @@ class Command(BaseCommand):
         processed = 0
         while processed < options["n"]:
             processed += options["chunk"]
+            start = time.time()
             records = get_records(options["state"], options["chunk"])
+            elapsed = time.time() - start
+            print(f"got {len(records)} in {elapsed}")
             geocode_chunk(records)
