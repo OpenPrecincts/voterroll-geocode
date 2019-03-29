@@ -51,8 +51,8 @@ def geocode_chunk(records):
                 GeocodeResult(record_id=result["id"], failed=True, is_exact=False)
             )
     elapsed = time.time() - start
-    print(f"saving {len(results)} records, {failures} were non-matched, took {elapsed}")
     GeocodeResult.objects.bulk_create(results)
+    return len(results), failures, elapsed
 
 
 class Command(BaseCommand):
@@ -65,10 +65,17 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         processed = 0
+        total_failures = 0
+        total_elapsed = 0
         while processed < options["n"]:
             processed += options["chunk"]
             start = time.time()
             records = get_records(options["state"], options["chunk"])
             elapsed = time.time() - start
             print(f"got {len(records)} in {elapsed}")
-            geocode_chunk(records)
+            results, failures, elapsed = geocode_chunk(records)
+            print(f"saving {results} records, {failures} were non-matched, took {elapsed}")
+            total_failures += failures
+            total_elapsed += elapsed
+
+        print(f"Done! saved a total {processed} records, {total_failures} were non-matched, took {total_elapsed}")
