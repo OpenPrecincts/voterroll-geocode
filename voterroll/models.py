@@ -36,3 +36,8 @@ class GeocodeResult(models.Model):
     county_fips = models.CharField(max_length=4)
     tract = models.CharField(max_length=8)
     block = models.CharField(max_length=8)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['failed'])
+        ]
