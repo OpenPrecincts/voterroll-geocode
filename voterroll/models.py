@@ -22,6 +22,26 @@ class VoterRecord(models.Model):
     precinct_id = models.CharField(max_length=20)
     precinct_name = models.CharField(max_length=100)
 
+    geocode_attempts = models.PositiveIntegerField(default=0)
+    latest_geocode_time = models.DateTimeField(null=True)
+    latest_geocode_result = models.CharField(
+        max_length=1,
+        choices=(
+            ('G', 'Geocoded'),
+            ('X', 'No Result From Geocoder'),
+            (' ', 'No Attempt'),
+        ),
+        default=' '
+    )
+    geocoded_address = models.CharField(max_length=300, blank=True)
+    geocode_is_exact = models.BooleanField(default=False)
+    coordinates = models.PointField(null=True)
+    tiger_line = models.CharField(max_length=20, blank=True)
+    tiger_side = models.CharField(max_length=2, blank=True)
+    county_fips = models.CharField(max_length=4, blank=True)
+    tract = models.CharField(max_length=8, blank=True)
+    block = models.CharField(max_length=8, blank=True)
+
 
 class GeocodeResult(models.Model):
     record = models.ForeignKey(
