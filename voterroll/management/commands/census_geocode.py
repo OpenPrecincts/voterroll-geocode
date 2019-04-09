@@ -1,7 +1,7 @@
 import time
 from django.core.management.base import BaseCommand
 from django.contrib.gis.geos import Point
-from voterroll.models import VoterRecord, GeocodeResult
+from voterroll.models import VoterRecord
 import censusbatchgeocoder
 
 
@@ -9,12 +9,11 @@ MAX_CHUNK_SIZE = 10000
 
 
 def get_records(state, n):
+    """ return list of records and {id: record} mapping """
     if n > MAX_CHUNK_SIZE:
         n = MAX_CHUNK_SIZE
-    return [
-        record_to_dict(r)
-        for r in VoterRecord.objects.filter(state=state, geocodes__isnull=True)[:n]
-    ]
+    qs = VoterRecord.objects.filter(state=state, geocodes__isnull=True)[:n]
+    return [record_to_dict(r) for r in qs], {r.id: r}
 
 
 def record_to_dict(record):
@@ -27,29 +26,28 @@ def record_to_dict(record):
     }
 
 
-def geocode_chunk(records):
+def geocode_chunk(records, record_map):
     results = []
     failures = 0
     start = time.time()
     for result in censusbatchgeocoder.geocode(records):
+        # get record to update
+        record = record_map[result["id"]]
+        record.geocode_attempts += 1
+        record.latest_geocode_time = start
+
         if result["is_match"] == "Match":
-            results.append(
-                GeocodeResult(
-                    record_id=result["id"],
-                    geocoded_address=result["geocoded_address"],
-                    is_exact=result["is_exact"] == "Exact",
-                    coordinates=Point(result["longitude"], result["latitude"]),
-                    tiger_line=result["tiger_line"],
-                    tiger_side=result["side"],
-                    tract=result["tract"],
-                    block=result["block"],
-                )
-            )
+            record.latest_geocode_result = "G"
+            record.geocoded_address = result["geocoded_address"]
+            record.geocode_is_exact = result["is_exact"] == "Exact"
+            record.coordinates = Point(result["longitude"], result["latitude"])
+            record.tiger_line = result["tiger_line"]
+            record.tiger_side = result["side"]
+            record.tract = result["tract"]
+            record.block = result["block"]
         else:
             failures += 1
-            results.append(
-                GeocodeResult(record_id=result["id"], failed=True, is_exact=False)
-            )
+            record.latest_geocode_result = "X"
     elapsed = time.time() - start
     GeocodeResult.objects.bulk_create(results)
     return len(results), failures, elapsed
@@ -70,11 +68,11 @@ class Command(BaseCommand):
         while processed < options["n"]:
             processed += options["chunk"]
             start = time.time()
-            records = get_records(options["state"], options["chunk"])
+            records, record_map = get_records(options["state"], options["chunk"])
             elapsed = time.time() - start
             print(f"got {len(records)} in {elapsed}")
             try:
-                results, failures, elapsed = geocode_chunk(records)
+                results, failures, elapsed = geocode_chunk(records, record_map)
             except Exception as e:
                 print(e)
                 continue
