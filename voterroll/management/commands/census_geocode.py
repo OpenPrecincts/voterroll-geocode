@@ -30,26 +30,28 @@ def geocode_chunk(records, record_map):
     results = []
     failures = 0
     start = time.time()
-    for result in censusbatchgeocoder.geocode(records):
-        # get record to update
-        record = record_map[result["id"]]
-        record.geocode_attempts += 1
-        record.latest_geocode_time = start
+    results = censusbatchgeocoder.geocode(records):
+    with transaction.atomic():
+        for result in results:
+            # get record to update
+            record = record_map[result["id"]]
+            record.geocode_attempts += 1
+            record.latest_geocode_time = start
 
-        if result["is_match"] == "Match":
-            record.latest_geocode_result = "G"
-            record.geocoded_address = result["geocoded_address"]
-            record.geocode_is_exact = result["is_exact"] == "Exact"
-            record.coordinates = Point(result["longitude"], result["latitude"])
-            record.tiger_line = result["tiger_line"]
-            record.tiger_side = result["side"]
-            record.tract = result["tract"]
-            record.block = result["block"]
-        else:
-            failures += 1
-            record.latest_geocode_result = "X"
+            if result["is_match"] == "Match":
+                record.latest_geocode_result = "G"
+                record.geocoded_address = result["geocoded_address"]
+                record.geocode_is_exact = result["is_exact"] == "Exact"
+                record.coordinates = Point(result["longitude"], result["latitude"])
+                record.tiger_line = result["tiger_line"]
+                record.tiger_side = result["side"]
+                record.tract = result["tract"]
+                record.block = result["block"]
+            else:
+                failures += 1
+                record.latest_geocode_result = "X"
+            record.save()
     elapsed = time.time() - start
-    GeocodeResult.objects.bulk_create(results)
     return len(results), failures, elapsed
 
 

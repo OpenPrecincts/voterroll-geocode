@@ -11,7 +11,7 @@ class Command(BaseCommand):
         now = datetime.datetime.utcnow()
 
         print(GeocodeResult.objects.all().count(), 'to migrate')
-        queryset = GeocodeResult.objects.all().order_by("id").select_related("record")[:50000]
+        queryset = GeocodeResult.objects.all().order_by("id").select_related("record")[:30000]
 
         with transaction.atomic():
             for i, gr in enumerate(queryset):
