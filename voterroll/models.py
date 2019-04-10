@@ -41,3 +41,9 @@ class VoterRecord(models.Model):
     county_fips = models.CharField(max_length=4, blank=True)
     tract = models.CharField(max_length=8, blank=True)
     block = models.CharField(max_length=8, blank=True)
+
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['state', 'latest_geocode_result']),
+        ]
