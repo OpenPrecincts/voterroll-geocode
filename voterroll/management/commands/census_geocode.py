@@ -1,6 +1,9 @@
 import time
+import datetime
+import pytz
 from django.core.management.base import BaseCommand
 from django.contrib.gis.geos import Point
+from django.db import transaction
 from voterroll.models import VoterRecord
 import censusbatchgeocoder
 
@@ -12,8 +15,8 @@ def get_records(state, n):
     """ return list of records and {id: record} mapping """
     if n > MAX_CHUNK_SIZE:
         n = MAX_CHUNK_SIZE
-    qs = VoterRecord.objects.filter(state=state, geocodes__isnull=True)[:n]
-    return [record_to_dict(r) for r in qs], {r.id: r}
+    qs = list(VoterRecord.objects.filter(state=state, latest_geocode_result=" ")[:n])
+    return [record_to_dict(r) for r in qs], {r.id: r for r in qs}
 
 
 def record_to_dict(record):
@@ -30,13 +33,14 @@ def geocode_chunk(records, record_map):
     results = []
     failures = 0
     start = time.time()
-    results = censusbatchgeocoder.geocode(records):
+    now = pytz.utc.localize(datetime.datetime.utcnow())
+    results = censusbatchgeocoder.geocode(records)
     with transaction.atomic():
         for result in results:
             # get record to update
             record = record_map[result["id"]]
             record.geocode_attempts += 1
-            record.latest_geocode_time = start
+            record.latest_geocode_time = now
 
             if result["is_match"] == "Match":
                 record.latest_geocode_result = "G"
