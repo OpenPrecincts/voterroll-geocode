@@ -17,9 +17,18 @@ def overview(request):
 
 def roll_status(request, roll_id):
     roll = get_object_or_404(VoterRoll, pk=roll_id)
-    records = roll.records.all().count()
-    failed = roll.records.filter(latest_geocode_result="X").count()
-    geocoded = roll.records.filter(latest_geocode_result="G").count()
+
+    with connection.cursor() as cursor:
+        cursor.execute(
+            """SELECT
+            COUNT(*) as records,
+            COUNT(*) filter(WHERE latest_geocode_result = 'X') as failed,
+            COUNT(*) filter(WHERE latest_geocode_result = 'G') as failed
+            FROM voterroll_voterrecord WHERE roll_id=%s""", [roll_id])
+        row = cursor.fetchone()
+        records = row[0]
+        failed = row[1]
+        geocoded = row[2]
     data = {
         "state": roll.state,
         "source": roll.source,
