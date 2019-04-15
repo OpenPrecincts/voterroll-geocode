@@ -49,6 +49,7 @@ def geocode_chunk(records, record_map):
                 record.coordinates = Point(result["longitude"], result["latitude"])
                 record.tiger_line = result["tiger_line"]
                 record.tiger_side = result["side"]
+                record.county_fips = result["county_fips"]
                 record.tract = result["tract"]
                 record.block = result["block"]
             else:
