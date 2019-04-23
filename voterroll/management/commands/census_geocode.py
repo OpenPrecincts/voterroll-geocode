@@ -4,7 +4,7 @@ import pytz
 from django.core.management.base import BaseCommand
 from django.contrib.gis.geos import Point
 from django.db import transaction
-from voterroll.models import VoterRecord
+from voterroll.models import VoterRecord, County
 import censusbatchgeocoder
 
 
@@ -76,6 +76,28 @@ class CensusGeocoder(ChunkedProcessor):
         return len(results), failures
 
 
+class CountyAssignment(ChunkedProcessor):
+    def get_records(self, state, chunk_size):
+        return list(VoterRecord.objects.filter(state=state, latest_geocode_result="G", county_fips='')[:chunk_size])
+
+    def process_chunk(self, records):
+        failures = 0
+        success = 0
+        with transaction.atomic():
+            for r in records:
+                county = list(County.objects.filter(poly__contains=r.coordinates))
+                if len(county) == 1:
+                    success += 1
+                    r.county_fips = county[0].county_fips
+                    r.save()
+                elif len(county) == 0:
+                    failures += 1
+                else:
+                    print("multiple matches?!", county)
+                    raise ValueError()
+        return success, failures
+
+
 class Command(BaseCommand):
     help = "Geocode voterroll records"
 
@@ -83,12 +105,16 @@ class Command(BaseCommand):
         parser.add_argument("state")
         parser.add_argument("-n", type=int, default=100000)
         parser.add_argument("--chunk", type=int, default=500)
+        parser.add_argument("--county", action="store_true")
 
     def handle(self, *args, **options):
         processed = 0
         total_failures = 0
         total_elapsed = 0
-        processor = CensusGeocoder()
+        if options["county"]:
+            processor = CountyAssignment()
+        else:
+            processor = CensusGeocoder()
         while processed < options["n"]:
             processed += options["chunk"]
             start = time.time()
