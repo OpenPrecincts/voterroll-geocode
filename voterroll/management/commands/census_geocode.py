@@ -85,6 +85,9 @@ class CountyAssignment(ChunkedProcessor):
         success = 0
         with transaction.atomic():
             for r in records:
+                if not r.coordinates:
+                    failures += 1
+                    continue
                 county = list(County.objects.filter(poly__contains=r.coordinates))
                 if len(county) == 1:
                     success += 1
