@@ -47,3 +47,15 @@ class VoterRecord(models.Model):
         indexes = [
             models.Index(fields=['state', 'latest_geocode_result']),
         ]
+
+
+class County(models.Model):
+    state_fips = models.CharField(max_length=2)
+    county_fips = models.CharField(max_length=4)
+    name = models.CharField(max_length=100)
+    poly = models.PolygonField()
+
+    def __str__(self):
+        return self.name
+
+
