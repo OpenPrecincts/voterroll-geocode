@@ -7,9 +7,10 @@ from .models import VoterRoll
 
 def overview(request):
     data = {
-        "rolls": list(VoterRoll.objects.all().annotate(
-            total_records=Count("records"),
-        ).values("id", "state", "source", "total_records")
+        "rolls": list(
+            VoterRoll.objects.all()
+            .annotate(total_records=Count("records"))
+            .values("id", "state", "source", "total_records")
         )
     }
     return JsonResponse(data)
@@ -24,7 +25,9 @@ def roll_status(request, roll_id):
             COUNT(*) as records,
             COUNT(*) filter(WHERE latest_geocode_result = 'X') as failed,
             COUNT(*) filter(WHERE latest_geocode_result = 'G') as failed
-            FROM voterroll_voterrecord WHERE roll_id=%s""", [roll_id])
+            FROM voterroll_voterrecord WHERE roll_id=%s""",
+            [roll_id],
+        )
         row = cursor.fetchone()
         records = row[0]
         failed = row[1]
@@ -35,7 +38,7 @@ def roll_status(request, roll_id):
         "records": records,
         "geocoded": geocoded,
         "failed": failed,
-        "percent_attempted":  (geocoded + failed) / records * 100,
+        "percent_attempted": (geocoded + failed) / records * 100,
         "percent_done": geocoded / records * 100,
     }
 

@@ -5,13 +5,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('voterroll', '0007_auto_20190410_0057'),
-    ]
+    dependencies = [("voterroll", "0007_auto_20190410_0057")]
 
     operations = [
         migrations.AddIndex(
-            model_name='voterrecord',
-            index=models.Index(fields=['state', 'latest_geocode_result'], name='voterroll_v_state_764acd_idx'),
-        ),
+            model_name="voterrecord",
+            index=models.Index(
+                fields=["state", "latest_geocode_result"],
+                name="voterroll_v_state_764acd_idx",
+            ),
+        )
     ]

@@ -6,54 +6,52 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('voterroll', '0004_auto_20190408_1915'),
-    ]
+    dependencies = [("voterroll", "0004_auto_20190408_1915")]
 
     operations = [
         migrations.AddField(
-            model_name='voterrecord',
-            name='block',
+            model_name="voterrecord",
+            name="block",
             field=models.CharField(blank=True, max_length=8),
         ),
         migrations.AddField(
-            model_name='voterrecord',
-            name='coordinates',
+            model_name="voterrecord",
+            name="coordinates",
             field=django.contrib.gis.db.models.fields.PointField(null=True, srid=4326),
         ),
         migrations.AddField(
-            model_name='voterrecord',
-            name='county_fips',
+            model_name="voterrecord",
+            name="county_fips",
             field=models.CharField(blank=True, max_length=4),
         ),
         migrations.AddField(
-            model_name='voterrecord',
-            name='geocode_attempts',
+            model_name="voterrecord",
+            name="geocode_attempts",
             field=models.PositiveIntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='voterrecord',
-            name='geocode_is_exact',
+            model_name="voterrecord",
+            name="geocode_is_exact",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='voterrecord',
-            name='geocoded_address',
+            model_name="voterrecord",
+            name="geocoded_address",
             field=models.CharField(blank=True, max_length=300),
         ),
         migrations.AddField(
-            model_name='voterrecord',
-            name='tiger_line',
+            model_name="voterrecord",
+            name="tiger_line",
             field=models.CharField(blank=True, max_length=20),
         ),
         migrations.AddField(
-            model_name='voterrecord',
-            name='tiger_side',
+            model_name="voterrecord",
+            name="tiger_side",
             field=models.CharField(blank=True, max_length=2),
         ),
         migrations.AddField(
-            model_name='voterrecord',
-            name='tract',
+            model_name="voterrecord",
+            name="tract",
             field=models.CharField(blank=True, max_length=8),
         ),
     ]

@@ -5,16 +5,9 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('voterroll', '0006_auto_20190409_1532'),
-    ]
+    dependencies = [("voterroll", "0006_auto_20190409_1532")]
 
     operations = [
-        migrations.RemoveField(
-            model_name='geocoderesult',
-            name='record',
-        ),
-        migrations.DeleteModel(
-            name='GeocodeResult',
-        ),
+        migrations.RemoveField(model_name="geocoderesult", name="record"),
+        migrations.DeleteModel(name="GeocodeResult"),
     ]

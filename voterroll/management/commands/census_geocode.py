@@ -83,8 +83,12 @@ class Command(BaseCommand):
             except Exception as e:
                 print(e)
                 continue
-            print(f"saving {results} records, {failures} were non-matched, took {elapsed}")
+            print(
+                f"saving {results} records, {failures} were non-matched, took {elapsed}"
+            )
             total_failures += failures
             total_elapsed += elapsed
 
-        print(f"Done! saved a total {processed} records, {total_failures} were non-matched, took {total_elapsed}")
+        print(
+            f"Done! saved a total {processed} records, {total_failures} were non-matched, took {total_elapsed}"
+        )
