@@ -122,6 +122,8 @@ class Command(BaseCommand):
             processed += options["chunk"]
             start = time.time()
             records = processor.get_records(options["state"], options["chunk"])
+            if not records:
+                break
             elapsed = time.time() - start
             print(f"got {len(records)} in {elapsed}")
             try:
