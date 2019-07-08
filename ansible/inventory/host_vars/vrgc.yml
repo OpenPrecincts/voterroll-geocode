@@ -1,0 +1,6 @@
+---
+django_environment:
+  DEBUG: false
+  ADMINS: James Turk jpturk@princeton.edu
+  SECRET_KEY: "{{ lookup('aws_ssm', '/op/production/SECRET_KEY') }}"
+  DATABASE_URL: "{{ lookup('aws_ssm', '/geocoding/DATABASE_URL') }}"

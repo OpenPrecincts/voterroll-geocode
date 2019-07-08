@@ -1,0 +1,3 @@
+- src: https://github.com/jamesturk/ansible-django-uwsgi-nginx
+  version: master
+  name: django-uwsgi-nginx

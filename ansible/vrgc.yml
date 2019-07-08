@@ -1,0 +1,14 @@
+---
+- name: Install vrgc
+  hosts: vrgc
+  user: ubuntu
+  become: yes
+  roles:
+    - role: django-uwsgi-nginx
+      vars:
+        - git_repository: https://github.com/openprecincts/voterroll-geocode.git
+          user: vrgc
+          directory: vrgc
+          wsgi_module: vrgc.wsgi
+          domain_name: vrgc.openprecincts.org
+          celery: false
