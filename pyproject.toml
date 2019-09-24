@@ -1,3 +1,17 @@
+[tool.poetry]
+name = "voterroll-geocode"
+version = "3.4"
+description = ""
+authors = ["James Turk <jpturk@princeton.edu>"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+django = "^2.2"
+dj-database-url = "^0.5.0"
+psycopg2-binary = "^2.8"
+censusbatchgeocoder = "^0.0.17"
+ipython = "^7.8"
+
 [tool.black]
 line-length = 88
 target_version = ['py37']
